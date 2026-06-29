@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تجربتي التطوعية - بنك الطعام المصري</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+    <style>
+        /* ========================================
+           الألوان الرئيسية لبنك الطعام المصري
+           ======================================== */
+        
+         :root {
+            --primary-green: #085748;
+            --secondary-green: #0a6b58;
+            --light-green: #D4F475;
+            --dark-bg: #0d0d0d;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(8, 87, 72, 0.3);
+            --text-light: #f0f4f0;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+        /* ========================================
+           إعدادات عامة
+           ======================================== */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        body.loaded {
+            opacity: 1;
+        }
+        /* ========================================
+           غلاف الصفحة (مثل غلاف فيس بوك)
+           ======================================== */
+        
+        .cover-container {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 1s ease 0.2s;
+        }
+        
+        .cover-container.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .cover-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.7) saturate(1.2);
+            transition: filter 0.5s ease, transform 0.8s ease;
+        }
+        
+        .cover-container:hover .cover-image {
+            filter: brightness(0.85) saturate(1.3);
+            transform: scale(1.02);
+        }
+        /* طبقة التدرج فوق الغلاف */
+        
+        .cover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(8, 87, 72, 0.4) 50%, rgba(13, 13, 13, 0.9) 100%);
+            pointer-events: none;
+        }
+        /* محتوى الغلاف (الشعار والنص) */
+        
+        .cover-content {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            left: 30px;
+            display: flex;
+            align-items: flex-end;
+            gap: 25px;
+            z-index: 2;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .cover-content {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+        
+        .cover-logo-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .cover-logo-wrapper .logo-ring {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 3px solid var(--light-green);
+            opacity: 0.6;
+            animation: pulseRing 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulseRing {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.08);
+                opacity: 0.2;
+            }
+        }
+        
+        .cover-logo-wrapper .cover-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #fff;
+            padding: 8px;
+            border: 3px solid var(--light-green);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+            object-fit: contain;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: block;
+        }
+        
+        .cover-logo-wrapper .cover-logo:hover {
+            transform: scale(1.08) rotate(5deg);
+            box-shadow: 0 12px 60px rgba(212, 244, 117, 0.3);
+        }
+        
+        .cover-text {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .cover-text .cover-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+            line-height: 1.2;
+        }
+        
+        .cover-text .cover-title span {
+            color: var(--light-green);
+        }
+        
+        .cover-text .cover-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+            margin-top: 4px;
+        }
+        
+        .cover-text .cover-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .cover-text .cover-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 14px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .cover-text .cover-meta i {
+            color: var(--light-green);
+        }
+        /* ========================================
+           الحاوية الرئيسية
+           ======================================== */
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 30px 60px;
+        }
+        /* ========================================
+           الأقسام المنفصلة
+           ======================================== */
+        
+        .section-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 35px 40px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+        }
+        
+        .section-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .section-card:hover {
+            border-color: rgba(212, 244, 117, 0.2);
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: var(--shadow);
+        }
+        
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(8, 87, 72, 0.02), transparent);
+            opacity: 0;
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+        
+        .section-card:hover::before {
+            opacity: 1;
+        }
+        
+        .section-card .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(212, 244, 117, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover .section-header {
+            border-bottom-color: rgba(212, 244, 117, 0.15);
+        }
+        
+        .section-card .section-header .icon-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--light-green);
+            flex-shrink: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .section-card:hover .icon-box {
+            transform: rotate(10deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(8, 87, 72, 0.4);
+        }
+        
+        .section-card .section-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover .section-header h2 {
+            color: var(--light-green);
+        }
+        
+        .section-card .section-header .header-badge {
+            margin-right: auto;
+            background: rgba(212, 244, 117, 0.08);
+            color: var(--light-green);
+            padding: 4px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            border: 1px solid rgba(212, 244, 117, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover .header-badge {
+            background: rgba(212, 244, 117, 0.15);
+            border-color: rgba(212, 244, 117, 0.2);
+            transform: scale(1.05);
+        }
+        /* ========================================
+           القسم 1: معلومات عن المؤسسة
+           ======================================== */
+        
+        .org-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 700px) {
+            .org-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .org-info-grid .org-desc {
+            color: #d0e0d0;
+            line-height: 1.9;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .org-info-grid .org-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .org-info-grid .org-details .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #b2c9b2;
+            font-size: 15px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .org-info-grid .org-details .detail-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(212, 244, 117, 0.1);
+            transform: translateX(-5px);
+        }
+        
+        .org-info-grid .org-details .detail-item i {
+            color: var(--light-green);
+            width: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .org-info-grid .org-details .detail-item:hover i {
+            transform: scale(1.2) rotate(5deg);
+        }
+        /* ========================================
+           القسم 2: مدير التطوع
+           ======================================== */
+        
+        .volunteer-manager {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .manager-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #fff;
+            flex-shrink: 0;
+            border: 3px solid var(--light-green);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .volunteer-manager:hover .manager-avatar {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 40px rgba(8, 87, 72, 0.4);
+        }
+        
+        .manager-info {
+            flex: 1;
+        }
+        
+        .manager-info .manager-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .volunteer-manager:hover .manager-name {
+            color: var(--light-green);
+        }
+        
+        .manager-info .manager-title {
+            color: var(--light-green);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 3px 0 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .manager-info .manager-title i {
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .volunteer-manager:hover .manager-title i {
+            transform: rotate(10deg);
+        }
+        
+        .manager-info .manager-bio {
+            color: #b2c9b2;
+            font-size: 14px;
+            line-height: 1.7;
+            max-width: 500px;
+            transition: all 0.3s ease;
+        }
+        
+        .manager-social {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .manager-social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b2c9b2;
+            font-size: 18px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+        
+        .manager-social a:hover {
+            color: var(--light-green);
+            border-color: var(--light-green);
+            background: rgba(212, 244, 117, 0.06);
+            transform: translateY(-5px) rotate(10deg) scale(1.1);
+            box-shadow: 0 5px 20px rgba(212, 244, 117, 0.1);
+        }
+        /* ========================================
+           القسم 3: معرض الصور - مع تحسين العرض
+           ======================================== */
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 18px;
+        }
+        
+        .gallery-item {
+            height: 200px;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05) translateY(-5px);
+            border-color: var(--light-green);
+            box-shadow: 0 15px 40px rgba(8, 87, 72, 0.3);
+            z-index: 10;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+        
+        .gallery-item::after {
+            content: '🔍';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--light-green);
+        }
+        
+        .gallery-item:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        /* ========================================
+           القسم 4: الشهادة التطوعية
+           ======================================== */
+        
+        .certificate-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        
+        @media (max-width: 800px) {
+            .certificate-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .certificate-image {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        
+        .certificate-image:hover {
+            border-color: var(--light-green);
+            transform: scale(1.02) translateY(-3px);
+            box-shadow: 0 15px 50px rgba(8, 87, 72, 0.25);
+        }
+        
+        .certificate-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: all 0.5s ease;
+        }
+        
+        .certificate-image:hover img {
+            transform: scale(1.03);
+        }
+        
+        .certificate-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .certificate-info .cert-detail {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s ease;
+        }
+        
+        .certificate-info .cert-detail:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(212, 244, 117, 0.1);
+            transform: translateX(-5px);
+        }
+        
+        .certificate-info .cert-detail i {
+            color: var(--light-green);
+            font-size: 18px;
+            width: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .certificate-info .cert-detail:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+        
+        .certificate-info .cert-detail .cert-label {
+            color: #b2c9b2;
+            font-size: 13px;
+        }
+        
+        .certificate-info .cert-detail .cert-value {
+            color: #fff;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .cert-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            margin-top: 5px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .cert-status-badge.available {
+            background: rgba(212, 244, 117, 0.1);
+            color: var(--light-green);
+            border: 1px solid rgba(212, 244, 117, 0.15);
+        }
+        
+        .cert-status-badge.available:hover {
+            background: rgba(212, 244, 117, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(212, 244, 117, 0.1);
+        }
+        
+        .cert-status-badge i {
+            transition: all 0.3s ease;
+        }
+        
+        .cert-status-badge:hover i {
+            transform: rotate(20deg);
+        }
+        /* ========================================
+           القسم 5: البرامج والأدوات
+           ======================================== */
+        
+        .tools-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .tool-tag {
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            background: rgba(8, 87, 72, 0.12);
+            border: 1px solid rgba(8, 87, 72, 0.15);
+            color: #d0e0d0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: default;
+        }
+        
+        .tool-tag:hover {
+            background: rgba(8, 87, 72, 0.2);
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--light-green);
+            box-shadow: 0 5px 25px rgba(8, 87, 72, 0.15);
+        }
+        
+        .tool-tag i {
+            color: var(--light-green);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-tag:hover i {
+            transform: rotate(15deg) scale(1.2);
+        }
+        /* ========================================
+           القسم 6: المهارات الشخصية
+           ======================================== */
+        
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .skill-tag {
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            background: rgba(212, 244, 117, 0.04);
+            border: 1px solid rgba(212, 244, 117, 0.08);
+            color: #d0e0d0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: default;
+        }
+        
+        .skill-tag:hover {
+            background: rgba(212, 244, 117, 0.08);
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--light-green);
+            box-shadow: 0 5px 25px rgba(212, 244, 117, 0.05);
+        }
+        
+        .skill-tag i {
+            color: var(--light-green);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-tag:hover i {
+            transform: rotate(15deg) scale(1.2);
+        }
+        /* ========================================
+           القسم 7: إحصائيات الخبرة
+           ======================================== */
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px 15px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .stat-box:hover {
+            background: rgba(8, 87, 72, 0.06);
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--light-green);
+            box-shadow: 0 10px 40px rgba(8, 87, 72, 0.15);
+        }
+        
+        .stat-box .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--light-green);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:hover .stat-number {
+            transform: scale(1.05);
+            text-shadow: 0 0 30px rgba(212, 244, 117, 0.1);
+        }
+        
+        .stat-box .stat-label {
+            color: #b2c9b2;
+            font-size: 14px;
+            margin-top: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:hover .stat-label {
+            color: #fff;
+        }
+        /* ========================================
+           القسم 8: معلومات المتطوع
+           ======================================== */
+        
+        .volunteer-footer-card {
+            background: linear-gradient(135deg, rgba(8, 87, 72, 0.08), rgba(8, 87, 72, 0.02));
+            border-color: rgba(8, 87, 72, 0.15);
+        }
+        
+        .volunteer-footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .volunteer-footer-content .vol-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        
+        .volunteer-footer-content .vol-info .vol-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            flex-shrink: 0;
+            border: 2px solid var(--light-green);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .volunteer-footer-content:hover .vol-avatar {
+            transform: rotate(10deg) scale(1.1);
+            box-shadow: 0 0 40px rgba(8, 87, 72, 0.3);
+        }
+        
+        .volunteer-footer-content .vol-info .vol-details .vol-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .volunteer-footer-content:hover .vol-name {
+            color: var(--light-green);
+        }
+        
+        .volunteer-footer-content .vol-info .vol-details .vol-role {
+            font-size: 14px;
+            color: #b2c9b2;
+        }
+        
+        .volunteer-footer-content .vol-social a {
+            color: #b2c9b2;
+            font-size: 20px;
+            margin-right: 14px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .volunteer-footer-content .vol-social a:hover {
+            color: var(--light-green);
+            transform: translateY(-5px) rotate(10deg) scale(1.2);
+            text-shadow: 0 0 30px rgba(212, 244, 117, 0.2);
+        }
+        /* ========================================
+           المودال للصور - تحسين العرض
+           ======================================== */
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal img {
+            max-width: 95%;
+            max-height: 90vh;
+            border-radius: 16px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--border-color);
+            transform: scale(0.9);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            object-fit: contain;
+        }
+        
+        .modal.active img {
+            transform: scale(1);
+        }
+        
+        .modal .close-modal {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            font-size: 36px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.05);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .modal .close-modal:hover {
+            background: rgba(8, 87, 72, 0.3);
+            transform: rotate(90deg) scale(1.1);
+            border-color: var(--light-green);
+        }
+        /* ========================================
+           أنيميشن إضافية
+           ======================================== */
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        /* ========================================
+           توافق الشاشات الصغيرة
+           ======================================== */
+        
+        @media (max-width: 992px) {
+            .cover-image {
+                height: 260px;
+            }
+            .cover-text .cover-title {
+                font-size: 28px;
+            }
+            .cover-logo-wrapper .cover-logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .cover-image {
+                height: 220px;
+            }
+            .cover-content {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                gap: 15px;
+            }
+            .cover-text .cover-title {
+                font-size: 22px;
+            }
+            .cover-text .cover-subtitle {
+                font-size: 15px;
+            }
+            .cover-text .cover-meta {
+                font-size: 12px;
+                gap: 6px 12px;
+            }
+            .cover-text .cover-meta span {
+                padding: 2px 10px;
+            }
+            .cover-logo-wrapper .cover-logo {
+                width: 65px;
+                height: 65px;
+            }
+            .main-container {
+                padding: 20px 15px 40px;
+            }
+            .section-card {
+                padding: 25px 20px;
+            }
+            .section-card .section-header h2 {
+                font-size: 18px;
+            }
+            .volunteer-manager {
+                flex-direction: column;
+                text-align: center;
+            }
+            .manager-social {
+                justify-content: center;
+            }
+            .volunteer-footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .volunteer-footer-content .vol-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            .gallery-item {
+                height: 150px;
+            }
+            .certificate-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .cover-image {
+                height: 180px;
+            }
+            .cover-text .cover-title {
+                font-size: 18px;
+            }
+            .cover-text .cover-subtitle {
+                font-size: 13px;
+            }
+            .cover-text .cover-meta {
+                font-size: 11px;
+            }
+            .cover-logo-wrapper .cover-logo {
+                width: 55px;
+                height: 55px;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            .gallery-item {
+                height: 120px;
+            }
+            .section-card {
+                padding: 18px 14px;
+            }
+            .manager-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========================================
+    غلاف الصفحة (مثل غلاف فيس بوك)
+    ======================================== -->
+    <div class="cover-container" id="coverContainer">
+        <!-- صورة الغلاف -->
+        <img src="egyptian_food_bank_cover.jfif" alt="غلاف بنك الطعام المصري" class="cover-image" />
+
+        <!-- طبقة التدرج -->
+        <div class="cover-overlay"></div>
+
+        <!-- محتوى الغلاف -->
+        <div class="cover-content">
+            <!-- الشعار -->
+            <div class="cover-logo-wrapper">
+                <div class="logo-ring"></div>
+                <img src="egyptian_food_bank_logo.jfif" alt="شعار بنك الطعام المصري" class="cover-logo" />
+            </div>
+
+            <!-- النصوص -->
+            <div class="cover-text">
+                <div class="cover-title">
+                    بنك الطعام <span>المصري</span>
+                </div>
+                <div class="cover-subtitle">
+                    <i class="fas fa-hand-holding-heart" style="color:var(--light-green);margin-left:8px;"></i> مكافحة الجوع وبناء مستقبل أفضل
+                </div>
+                <div class="cover-meta">
+                    <span><i class="fas fa-calendar-alt"></i> تأسست 2004</span>
+                    <span><i class="fas fa-map-pin"></i> القاهرة، مصر</span>
+                    <span><i class="fas fa-phone"></i> 16060</span>
+                    <span><i class="fas fa-globe"></i> efb.eg</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+    الحاوية الرئيسية
+    ======================================== -->
+    <main class="main-container">
+
+        <!-- ========================================
+        القسم 1: معلومات عن المؤسسة
+        ======================================== -->
+        <section class="section-card" id="section1">
+            <div class="section-header">
+                <div class="icon-box"><i class="fas fa-building"></i></div>
+                <h2>عن المؤسسة</h2>
+                <span class="header-badge">الرؤية والرسالة</span>
+            </div>
+            <div class="org-info-grid">
+                <p class="org-desc">
+                    <i class="fas fa-quote-right" style="color:var(--light-green);margin-left:8px;"></i> بنك الطعام المصري هو أول مؤسسة خيرية متخصصة في مكافحة الجوع في مصر، تأسست عام 2004 برؤية إنسانية تهدف إلى توفير الغذاء الصحي والآمن للأسر الأكثر احتياجاً.
+                    تعمل المؤسسة من خلال برامج متنوعة تشمل: إفطار الصائم، الأضاحي، الدعم الغذائي الشهري، وبرامج التمكين الاقتصادي والتنمية المجتمعية.
+                </p>
+                <div class="org-details">
+                    <div class="detail-item"><i class="fas fa-calendar-alt"></i> سنة التأسيس: 2004</div>
+                    <div class="detail-item"><i class="fas fa-users"></i> عدد الموظفين: 1001-5000</div>
+                    <div class="detail-item"><i class="fas fa-phone-alt"></i> رقم الاتصال: 16060</div>
+                    <div class="detail-item"><i class="fas fa-envelope"></i> البريد الإلكتروني: info@efb.eg</div>
+                    <div class="detail-item"><i class="fas fa-globe-africa"></i> الموقع: efb.eg</div>
+                    <div class="detail-item"><i class="fas fa-trophy"></i> الجوائز: جائزة الأمم المتحدة للعمل الإنساني</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+        القسم 2: مدير التطوع
+        ======================================== -->
+        <section class="section-card" id="section2">
+            <div class="section-header">
+                <div class="icon-box"><i class="fas fa-user-tie"></i></div>
+                <h2>مدير التطوع</h2>
+                <span class="header-badge">المشرف المباشر</span>
+            </div>
+            <div class="volunteer-manager">
+                <div class="manager-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="manager-info">
+                    <div class="manager-name">نورهان نبيل</div>
+                    <div class="manager-title">
+                        <i class="fas fa-briefcase"></i> مدير إدارة المتطوعين - بنك الطعام المصري
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+        القسم 3: معرض الصور - مع تحسين العرض
+        ======================================== -->
+        <section class="section-card" id="section3">
+            <div class="section-header">
+                <div class="icon-box"><i class="fas fa-images"></i></div>
+                <h2>صور في تطوعي في بنك الطعام المصري</h2>
+                <span class="header-badge">معرض الأعمال</span>
+            </div>
+            <div class="gallery-grid">
+                <!-- الصور مع مسار صحيح - تم إصلاح تمرير المسار -->
+                <div class="gallery-item" onclick="openModal(this.querySelector('img').src)">
+                    <img src="افضل متطوع.psd.jpg" alt="أفضل متطوع" loading="lazy" />
+                </div>
+                <div class="gallery-item" onclick="openModal(this.querySelector('img').src)">
+                    <img src="1778199024345.jfif" alt="فريق المتطوعين" loading="lazy" />
+                </div>
+                <div class="gallery-item" onclick="openModal(this.querySelector('img').src)">
+                    <img src="1778199025175.jfif" alt="تكريم المتطوعين" loading="lazy" />
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+        القسم 4: الشهادة التطوعية
+        ======================================== -->
+        <section class="section-card" id="section4">
+            <div class="section-header">
+                <div class="icon-box"><i class="fas fa-award"></i></div>
+                <h2>شهادة التطوع</h2>
+                <span class="header-badge">توثيق الخبرة</span>
+            </div>
+            <div class="certificate-wrapper">
+                <div class="certificate-image" onclick="openModal(this.querySelector('img').src)">
+                    <img id="certImage" src="1778838354175.jfif" alt="شهادة التطوع" />
+                </div>
+                <div class="certificate-info">
+                    <div class="cert-detail">
+                        <i class="fas fa-file-signature"></i>
+                        <div>
+                            <div class="cert-label">اسم الشهادة</div>
+                            <div class="cert-value">شهادة تقديرية للمتطوعين من بنك الطعام المصري</div>
+                        </div>
+                    </div>
+                    <div class="cert-detail">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <div class="cert-label">تاريخ الإصدار</div>
+                            <div class="cert-value"> اغسطس 2025</div>
+                        </div>
+                    </div>
+                    <div class="cert-detail">
+                        <i class="fas fa-hashtag"></i>
+                        <div>
+                            <div class="cert-label">رقم الشهادة</div>
+                            <div class="cert-value">غير موجود</div>
+                        </div>
+                    </div>
+                    <div class="cert-detail">
+                        <i class="fas fa-user-check"></i>
+                        <div>
+                            <div class="cert-label">مقدمة من</div>
+                            <div class="cert-value">بنك الطعام المصري - إدارة التطوع</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+        القسم 5: البرامج والأدوات المستخدمة
+        ======================================== -->
+        <section class="section-card" id="section5">
+            <div class="section-header">
+                <div class="icon-box"><i class="fas fa-laptop-code"></i></div>
+                <h2>البرامج والأدوات</h2>
+                <span class="header-badge">التقنيات المستخدمة</span>
+            </div>
+            <div class="tools-grid">
+                <span class="tool-tag"><i class="fas fa-file-word"></i>Adobe Photoshop</span>
+                <span class="tool-tag"><i class="fas fa-google"></i>Adobe Premiere Pro</span>
+                <span class="tool-tag"><i class="fas fa-paint-brush"></i>Canva للتصميم</span>
+                <span class="tool-tag"><i class="fas fa-video"></i> Zoom / Microsoft Teams / Google Meet</span>
+            </div>
+        </section>
+
+        <!-- ========================================
+        القسم 6: المهارات الشخصية
+        ======================================== -->
+        <section class="section-card" id="section6">
+            <div class="section-header">
+                <div class="icon-box"><i class="fas fa-brain"></i></div>
+                <h2>المهارات الشخصية</h2>
+                <span class="header-badge">سوفت سكيلز</span>
+            </div>
+            <div class="skills-grid">
+                <span class="skill-tag"><i class="fas fa-comments"></i> التواصل الفعّال</span>
+                <span class="skill-tag"><i class="fas fa-lightbulb"></i> حل المشكلات</span>
+                <span class="skill-tag"><i class="fas fa-clock"></i> العمل تحت الضغط</span>
+                <span class="skill-tag"><i class="fas fa-tasks"></i> التخطيط والتنظيم</span>
+                <span class="skill-tag"><i class="fas fa-people-arrows"></i> العمل الجماعي</span>
+                <span class="skill-tag"><i class="fas fa-heart"></i> التفكير الابداعي</span>
+            </div>
+        </section>
+
+        <!-- ========================================
+        القسم 7: إحصائيات الخبرة
+        ======================================== -->
+        <section class="section-card" id="section7">
+            <div class="section-header">
+                <div class="icon-box"><i class="fas fa-chart-bar"></i></div>
+                <h2>إحصائيات الخبرة</h2>
+                <span class="header-badge">الإنجازات</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number">350+</div>
+                    <div class="stat-label">ساعات تطوعية</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">مشاريع نفذتها</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+        القسم 8: معلومات المتطوع (تذييل)
+        ======================================== -->
+        <section class="section-card volunteer-footer-card" id="section8">
+            <div class="volunteer-footer-content">
+                <div class="vol-info">
+                    <div class="vol-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="vol-details">
+                        <div class="vol-name">احمد حاتم</div>
+                        <div class="vol-role">متطوع في بنك الطعام المصري 2024-2025</div>
+                    </div>
+                </div>
+                <div class="vol-social">
+                    <a href="https://www.linkedin.com/in/ahmed-hatem11/" title="لينكد إن"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================
+    المودال لعرض الصور مكبرة
+    ======================================== -->
+    <div class="modal" id="imageModal">
+        <div class="close-modal" id="closeModal">
+            <i class="fas fa-times"></i>
+        </div>
+        <img id="modalImage" src="" alt="صورة مكبرة">
+    </div>
+
+    <!-- ========================================
+    JavaScript - فقط للمودال والترانزيشن
+    ======================================== -->
+    <script>
+        // ============================================
+        // المودال للصور
+        // ============================================
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const closeModalBtn = document.getElementById('closeModal');
+
+        function openModal(src) {
+            if (src) {
+                modalImg.src = src;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ============================================
+        // تفعيل الترانزيشن عند التحميل
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // إظهار body
+            document.body.classList.add('loaded');
+
+            // إظهار الغلاف
+            setTimeout(() => {
+                document.getElementById('coverContainer').classList.add('visible');
+            }, 100);
+
+            // إظهار الأقسام بتأخير متدرج
+            const sections = document.querySelectorAll('.section-card');
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.classList.add('visible');
+                }, 300 + (index * 150));
+            });
+
+            console.log('✅ صفحة الخبرة التطوعية - بنك الطعام المصري');
+            console.log('📌 تم إصلاح مشكلة فتح الصور في المودال');
+            console.log('📌 الآن عند الضغط على أي صورة تظهر بشكل مكبر في المودال');
+        });
+    </script>
+
+</body>
+
+</html>
